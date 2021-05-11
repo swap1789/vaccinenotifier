@@ -3,6 +3,7 @@ const nodemailer = require("nodemailer");
 const cron = require("node-cron");
 const axios = require("axios");
 const { format, add } = require("date-fns");
+const EmailTemplate = require("email-templates").EmailTemplate;
 const path = require("path");
 
 app = express();
@@ -14,16 +15,16 @@ const selectedDate = format(add(new Date(), {days: 1}), "dd-MM-yyyy");
 const url1 = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=######&date=${selectedDate}`;
 const url2 = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=######&date=${selectedDate}`;
 
-const urls = [url1, url2];
+const urls = [url1, url2]; // collection of urls based on pincode
 
 const useragent =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:24.0) Gecko/20100101 Firefox/24.0";
 
-const EmailTemplate = require("email-templates").EmailTemplate;
-
 // add the distribution list
 const mailList = ["###########@gmail.com", "##########@gmail.com"];
 
+
+// send emailer
 async function sendMail(context) {
   const template = new EmailTemplate(
     path.join(__dirname, "template", "emailer")
@@ -78,6 +79,7 @@ cron.schedule("*/1 * * * *", async function () {
   }
 });
 
+// format data to send it in the emailer
 async function formatData(dataSet) {
   try {
     const collection = [];
@@ -85,19 +87,20 @@ async function formatData(dataSet) {
       const data = center.sessions.filter((obj) => obj.available_capacity > 0);
       if (data.length) {
         const availableSlots = data.map((elem) => {
+          const { min_age_limit, slots, date, available_capacity, vaccine } = elem;
+          const { address, pincode, fee_type } = center;
           const obj = {
-            ageLimit: elem.min_age_limit,
-            slots: elem.slots,
-            date: elem.date,
-            address: center.address,
-            pincode: center.pincode,
-            capacity: elem.available_capacity,
-			      fees: center.fee_type,
-			      vaccine: elem.vaccine
+            ageLimit: min_age_limit,
+            slots: slots,
+            date: date,
+            address: address,
+            pincode: pincode,
+            capacity: available_capacity,
+			      fees: fee_type,
+			      vaccine: vaccine
           };
           return obj;
         });
-        console.log(JSON.stringify(availableSlots, null, 4));
         collection.push(availableSlots);
       }
     });
