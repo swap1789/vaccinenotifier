@@ -1,0 +1,26 @@
+<table>
+    <thead>
+        <th>Address</th>
+        <th>Date</th>
+        <th>Age</th>
+        <th>Capacity</th>
+        <th>Slots</th>
+        <th>Fees</th>
+        <th>Vaccine</th>
+    </thead>
+{{#each data}}
+    
+        {{#each this}}
+        <tr>
+            <td>{{this.address}}</td>
+            <td>{{this.date}}</td>
+            <td>{{this.ageLimit}}</td>
+            <td>{{this.capacity}}</td>
+            <td>{{this.slots}}</td>
+            <td>{{this.fees}}</td>
+            <td>{{this.vaccine}}</td>
+        </tr>
+        {{/each}}
+    
+{{/each}}
+</table>
