@@ -4,6 +4,7 @@ const cron = require("node-cron");
 const axios = require("axios");
 const { format, add } = require("date-fns");
 const EmailTemplate = require("email-templates").EmailTemplate;
+const notifier = require('node-notifier');
 const path = require("path");
 
 app = express();
@@ -50,6 +51,11 @@ async function sendMail(context) {
       console.log("Something went wrong ...", e);
     } else {
       console.log("Email got tiggred", data);
+      notifier.notify({
+        title: 'Slots Available',
+        message: 'Go to COWIN and book your slot quickly',
+        sound: true,
+      });
     }
   });
 }

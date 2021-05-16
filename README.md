@@ -9,6 +9,7 @@ A simple Node server running a cron job every minute to check the vaccine slot a
 - support for multiple pincodes
 - get a notification via email
 - support to add multiple email ids
+- get notification on your machine as soon email is triggered
 - templating to customize the email content
 
 
